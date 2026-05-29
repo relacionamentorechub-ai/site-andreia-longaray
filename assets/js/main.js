@@ -96,11 +96,12 @@
   /* ----- vídeo: play só quando visível no viewport ----- */
   const video = $('.video-frame video');
   if (video) {
-    video.removeAttribute('autoplay');
+    const tryPlay = () => video.play().catch(() => {});
     const playWhenVisible = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          video.play().catch(() => {});
+          if (video.readyState >= 2) tryPlay();
+          else video.addEventListener('loadeddata', tryPlay, { once: true });
         } else {
           video.pause();
         }
