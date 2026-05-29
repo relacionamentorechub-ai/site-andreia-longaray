@@ -221,7 +221,7 @@ h3 {
   margin-top: .3rem;
   font-weight: 500;
 }
-.site-header[data-scrolled] .brand-name { font-size: 1.3rem; }
+/* font-size removido: causava reflow/jank no scroll mobile */
 
 .site-nav ul {
   display: flex;
@@ -981,10 +981,19 @@ h3 {
    ========================================================= */
 
 .scroll-hint { display: none; }
+.mobile-br { display: none; }
 
 @media (max-width: 760px) {
   /* ----- diferenciais: carrossel horizontal com seta ----- */
   .section-diferenciais .container { position: relative; }
+  /* eyebrow mobile quebra em 2 linhas */
+  .mobile-br { display: inline; }
+
+  /* wrapper posicionado para o hint flutuar sobre a borda direita */
+  .scroll-wrap {
+    position: relative;
+  }
+
   .cards-grid.cards-4.cards-scroll {
     display: flex;
     flex-direction: row;
@@ -993,6 +1002,7 @@ h3 {
     overflow-y: visible;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
     gap: 1rem;
     padding: .4rem 1.5rem 1.4rem;
     margin: 0 -1.5rem;
@@ -1005,37 +1015,41 @@ h3 {
     scroll-snap-align: start;
     margin: 0;
   }
-  .cards-grid .scroll-hint {
-    display: inline-flex;
-    flex: 0 0 auto;
-    align-self: center;
-    width: 44px;
-    height: 44px;
+
+  /* hint: absoluto relativo ao .scroll-wrap (fora do overflow) */
+  .scroll-hint {
+    display: flex;
+    position: absolute;
+    right: .8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    background: var(--gold-strong);
+    background: rgba(199, 154, 68, .78);
     color: var(--cream);
     align-items: center;
     justify-content: center;
-    position: relative;
-    margin-left: -.5rem;
-    margin-right: .5rem;
-    animation: hint-bounce 1.6s var(--ease) infinite;
-    box-shadow: 0 8px 18px rgba(199, 154, 68, .25);
+    pointer-events: none;
+    z-index: 10;
+    animation: hint-pulse 1.8s ease-in-out infinite;
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 12px rgba(199, 154, 68, .3);
   }
-  .cards-grid .scroll-hint::after {
+  .scroll-hint::after {
     content: '';
-    width: 10px;
-    height: 10px;
+    width: 9px;
+    height: 9px;
     border-top: 2px solid var(--cream);
     border-right: 2px solid var(--cream);
     transform: rotate(45deg) translateX(-2px);
   }
-  @keyframes hint-bounce {
-    0%, 100% { transform: translateX(0); }
-    50% { transform: translateX(8px); }
+  @keyframes hint-pulse {
+    0%, 100% { opacity: .75; transform: translateY(-50%) translateX(0); }
+    50% { opacity: 1; transform: translateY(-50%) translateX(5px); }
   }
 
-  /* ----- serviços: 2 linhas, scroll horizontal independente por linha ----- */
+  /* ----- serviços: 3 linhas, scroll horizontal por linha ----- */
   .servicos-rows {
     display: flex;
     flex-direction: column;
@@ -1049,6 +1063,7 @@ h3 {
     overflow-y: visible;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
     gap: .9rem;
     padding: .4rem 1.5rem 1rem;
     scroll-padding-inline: 1.5rem;
