@@ -93,14 +93,19 @@
     el.textContent = new Date().getFullYear();
   });
 
-  /* ----- garante autoplay do vídeo institucional ----- */
+  /* ----- vídeo: play só quando visível no viewport ----- */
   const video = $('.video-frame video');
   if (video) {
-    const tryPlay = () => {
-      const p = video.play();
-      if (p && typeof p.catch === 'function') p.catch(() => {});
-    };
-    if (video.readyState >= 2) tryPlay();
-    else video.addEventListener('loadeddata', tryPlay, { once: true });
+    video.removeAttribute('autoplay');
+    const playWhenVisible = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      });
+    }, { threshold: 0.3 });
+    playWhenVisible.observe(video);
   }
 })();
