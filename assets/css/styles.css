@@ -395,7 +395,8 @@ h3 {
     padding-right: 1.5rem;
   }
 }
-.hero h1 { color: var(--cream); margin-bottom: .8rem; }
+.hero h1 { color: var(--cream); margin-bottom: .8rem; max-width: 7em; }
+@media (max-width: 767px) { .hero h1 { max-width: none; } }
 .hero h1 em { color: var(--gold); }
 .hero .eyebrow { color: var(--gold); }
 .hero .lead {
